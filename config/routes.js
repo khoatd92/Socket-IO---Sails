@@ -21,20 +21,24 @@
  */
 
 module.exports.routes = {
-  '/' : {
-         controller: 'main',
-         action: 'index'
-    },
-    '/signup' : {
-         controller: 'main',
-         action: 'signup'
-    },
-    '/login' : {
-         controller: 'main',
-         action: 'login'
-    },
-    '/chat' : {
-         controller: 'main',
-         action: 'chat'
-    }
+  '/': {
+    controller: 'main',
+    action: 'index'
+  },
+  '/signup': {
+    controller: 'main',
+    action: 'signup'
+  },
+  '/login': {
+    controller: 'main',
+    action: 'login'
+  },
+  '/chat': {
+    controller: 'main',
+    action: 'chat'
+  },
+  '/synccontact': {
+    controller: 'main',
+    action: 'synccontact'
+  }
 };
