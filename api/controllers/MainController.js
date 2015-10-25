@@ -41,7 +41,7 @@ var MainController = {
       if (err) {
         res.send(500, {error: "DB Error"});
       } else if (result) {
-        res.send(400, {error: "Username already Taken"});
+        res.send(400, {error: "phone number already Taken"});
       } else {
         var hasher = require("password-hash");
         password = hasher.generate(password);
@@ -86,23 +86,33 @@ var MainController = {
   synccontact: function (req, res) {
     console.log("sync contact start");
     var arrayPhoneNumber = req.param("listphonenumber");
-    //var array = JSON.parse("[" + arrayPhoneNumber + "]");
     console.log("sycn contact : list phone number " + arrayPhoneNumber);
-    for (i = 0; i < arrayPhoneNumber.length; i++) {
-      console.log("search phone number " + arrayPhoneNumber[i]);
-      Users.findOne({phoneNumber: arrayPhoneNumber[i]}).exec(function (err, result) {
+    var phoneNumberActive = [];
+    async.forEach(arrayPhoneNumber, function(item, callback) {
+      console.log('sycn contact search phone number ' + item);
+      Users.findOne({phoneNumber: item}).exec(function (err, result) {
         if (err) {
-          console.log("DB Error " + arrayPhoneNumber[i]);
+          console.log("DB Error " + item);
+          return callback("DB Error ");
         } else {
           if (result) {
-            console.log("User Found " + arrayPhoneNumber[i]);
-            req.session.result += result;
+            phoneNumberActive.push(item);
+            console.log("sycn contact User Found " + item);
           } else {
-            console.log("User not Found " + arrayPhoneNumber[i]);
+            console.log("sycn contact User not Found " + item);
           }
+          callback();
         }
       });
-    }
+    }, function(err){
+      console.log('Processed finish '+phoneNumberActive);
+      if( err ) {
+        console.error(err.message);
+      } else {
+        res.send(phoneNumberActive);
+        console.log('Processed successfully');
+      }
+    });
   }
 };
 module.exports = MainController;
