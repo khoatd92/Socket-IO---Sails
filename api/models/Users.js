@@ -14,12 +14,11 @@ module.exports = {
   	 token: 'STRING',
   	 activeTimestamp: 'STRING',
   	 displayName: 'STRING',
-     password: 'STRING',
-     phoneNumber: 'STRING',
      lastLoginTimestamp: 'STRING',
      status: 'STRING',
      userStatus:'STRING',
-     profilePhotoURL:'STRING'
+     profilePhotoURL:'STRING',
+     listFriendByPhoneNumber: 'STRING'
   }
 };
 

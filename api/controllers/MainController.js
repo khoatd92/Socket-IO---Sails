@@ -4,40 +4,24 @@
  * @description :: Server-side logic for managing mains
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-//User.findOne({name:'Jessie'}).exec(function findOneCB(err, found){
-//console.log('We found '+found.name);
-//});
-/*
- phoneNumber: 'STRING',
- password: 'STRING',
- socketId: 'STRING',
- token: 'STRING',
- activeTimestamp: 'STRING',
- displayName: 'STRING',
- password: 'STRING',
- phoneNumber: 'STRING',
- lastLoginTimestamp: 'STRING',
- status: 'STRING',
- userStatus:'STRING',
- profilePhotoURL:'STRING'
- */
 
-/*
- status code
- 500: db error
- 400: username already taken or wrong password
- 404: user not found
- */
+var morgan = require('morgan');
+var jwt = require('jsonwebtoken');
+var app = require('express')();
+var keyGenerateToken = 'kinghandsome';
+app.use(morgan('dev'));
+
 var MainController = {
+
   index: function (req, res) {
     res.view();
   },
+
   signup: function (req, res) {
-    var phonenumber = req.param("phonenumber");
+    var phoneNumber = req.param("phoneNumber");
     var password = req.param("password");
-    console.log("start signup: phone number " + phonenumber + "--password: " + password);
-    Users.findOne({phoneNumber: phonenumber}).exec(function (err, result) {
-      console.log("Result signup " + result);
+    console.log("start signup: phone number " + phoneNumber + "--password: " + password);
+    Users.findOne({phoneNumber: phoneNumber}).exec(function (err, result) {
       if (err) {
         res.send(500, {error: "DB Error"});
       } else if (result) {
@@ -46,19 +30,27 @@ var MainController = {
         var hasher = require("password-hash");
         password = hasher.generate(password);
         console.log("create user");
-        Users.create({phoneNumber: phonenumber, password: password}).exec(function (error, result) {
+        var token = jwt.sign(phoneNumber, keyGenerateToken, {
+          expiresInMinutes: 1440 // expires in 24 hours
+        });
+        Users.create({
+          phoneNumber: phoneNumber,
+          password: password,
+          token: token,
+          activeTimestamp: +new Date()
+        }).exec(function (error, user) {
           if (error) {
             res.send(500, {error: "DB Error"});
           } else {
-            req.session.result = result;
-            res.send(result);
+            req.session.user = user;
+            res.send(user);
           }
         });
       }
     });
   },
   login: function (req, res) {
-    var phonenumber = req.param("phonenumber");
+    var phonenumber = req.param("phoneNumber");
     var password = req.param("password");
     console.log("start login function : phonenumber " + phonenumber + "- password " + password);
     Users.findOne({phoneNumber: phonenumber}).exec(function (err, result) {
@@ -79,6 +71,7 @@ var MainController = {
       }
     });
   },
+
   chat: function (req, res) {
 
   },
@@ -88,7 +81,7 @@ var MainController = {
     var arrayPhoneNumber = req.param("listphonenumber");
     console.log("sycn contact : list phone number " + arrayPhoneNumber);
     var phoneNumberActive = [];
-    async.forEach(arrayPhoneNumber, function(item, callback) {
+    async.forEach(arrayPhoneNumber, function (item, callback) {
       console.log('sycn contact search phone number ' + item);
       Users.findOne({phoneNumber: item}).exec(function (err, result) {
         if (err) {
@@ -104,9 +97,9 @@ var MainController = {
           callback();
         }
       });
-    }, function(err){
-      console.log('Processed finish '+phoneNumberActive);
-      if( err ) {
+    }, function (err) {
+      console.log('Processed finish ' + phoneNumberActive);
+      if (err) {
         console.error(err.message);
       } else {
         res.send(phoneNumberActive);
