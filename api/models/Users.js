@@ -8,8 +8,8 @@
 module.exports = {
 
   attributes: {
-    phoneNumber: 'STRING',
-    password: 'STRING',
+     phoneNumber: 'STRING',
+     password: 'STRING',
   	 socketId: 'STRING',
   	 token: 'STRING',
   	 activeTimestamp: 'STRING',

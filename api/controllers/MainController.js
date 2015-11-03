@@ -31,7 +31,7 @@ var MainController = {
         password = hasher.generate(password);
         console.log("create user");
         var token = jwt.sign(phoneNumber, keyGenerateToken, {
-          expiresInMinutes: 1440 // expires in 24 hours
+          expiresIn: 1440 // expires in 24 hours
         });
         Users.create({
           phoneNumber: phoneNumber,
@@ -42,8 +42,8 @@ var MainController = {
           if (error) {
             res.send(500, {error: "DB Error"});
           } else {
-            req.session.user = user;
-            res.send(user);
+            console.log('return result signup ')
+            res.send(200, user);
           }
         });
       }
@@ -79,6 +79,7 @@ var MainController = {
   synccontact: function (req, res) {
     console.log("sync contact start");
     var arrayPhoneNumber = req.param("listphonenumber");
+    var phoneNumber = req.param("phoneNumber");
     console.log("sycn contact : list phone number " + arrayPhoneNumber);
     var phoneNumberActive = [];
     async.forEach(arrayPhoneNumber, function (item, callback) {
@@ -102,6 +103,12 @@ var MainController = {
       if (err) {
         console.error(err.message);
       } else {
+        Users.update({phoneNumber:phoneNumber},{listFriendByPhoneNumber:phoneNumberActive}).exec(function afterwards(err, updated){
+          if (err) {
+            return;
+          }
+          console.log('Add phone number after sync');
+        });
         res.send(phoneNumberActive);
         console.log('Processed successfully');
       }

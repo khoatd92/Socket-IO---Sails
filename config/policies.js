@@ -38,6 +38,7 @@ module.exports.policies = {
     '*':'sessionAuth',//default will be verified all api
     signup: true, //except api signup
     login: true, //except api signup
+    synccontact: true,
   }
 
 	 //RabbitController: {
