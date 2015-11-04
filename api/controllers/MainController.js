@@ -25,7 +25,7 @@ var MainController = {
       if (err) {
         res.send(500, {error: "DB Error"});
       } else if (result) {
-        res.send(400, {error: "phone number already Taken"});
+        res.send(404, {error: "phone number already Taken"});
       } else {
         var hasher = require("password-hash");
         password = hasher.generate(password);
