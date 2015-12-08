@@ -73,7 +73,14 @@ var MainController = {
   },
 
   chat: function (req, res) {
-
+    var data_from_client = req.params.all();
+    console.log("chat function req.method  "+req.method );
+    console.log("chat function "+data_from_client.phoneNumber);
+    if(req.isSocket && req.method === 'POST'){
+      console.log("This is the message from connected client So add new conversation");
+    } else if(req.isSocket){
+      console.log("subscribe client to model changes");
+    }
   },
 
   synccontact: function (req, res) {
@@ -90,6 +97,7 @@ var MainController = {
           return callback("DB Error ");
         } else {
           if (result) {
+            Users.subscribe(result.socketId, result.phoneNumber);
             phoneNumberActive.push(item);
             console.log("sycn contact User Found " + item);
           } else {
@@ -103,7 +111,7 @@ var MainController = {
       if (err) {
         console.error(err.message);
       } else {
-        Users.update({phoneNumber:phoneNumber},{listFriendByPhoneNumber:phoneNumberActive}).exec(function afterwards(err, updated){
+        Users.update({phoneNumber: phoneNumber}, {listFriendByPhoneNumber: phoneNumberActive}).exec(function afterwards(err, updated) {
           if (err) {
             return;
           }

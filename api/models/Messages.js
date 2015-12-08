@@ -8,13 +8,13 @@
 module.exports = {
 
  attributes  : {
- 	 	receiveId: 'STRING',
+ 	 	    receiveId: 'STRING',
         senderId: 'STRING',
         messageId: 'STRING',
         isReceived: 'STRING',
         message: 'STRING',
         messageTimestamp: 'STRING',
-        isEncrypted: 'STRING'      
+        isEncrypted: 'STRING'
     }
 };
 

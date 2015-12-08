@@ -39,6 +39,7 @@ module.exports.policies = {
     signup: true, //except api signup
     login: true, //except api signup
     synccontact: true,
+    chat:true
   }
 
 	 //RabbitController: {
